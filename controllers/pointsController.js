@@ -1,8 +1,19 @@
+const transactionHistory = [];
+const { addTransaction } = require('../services/addTransaction');
+
 exports.addTransaction = (req, res) => {
-    // DB Logic
+    if (!req.body.payer || !req.body.points) {
+        res.status(400).json({
+            message: "Transaction object requires 'payer' and 'points' keys."
+        })
+        return;
+    }
+    
+    addTransaction(req.body, transactionHistory);
 
     res.status(200).json({
-        message: "Add transaction controller hit."
+        message: "Transaction successfully added.",
+        data: transactionHistory
     })
 }
 
