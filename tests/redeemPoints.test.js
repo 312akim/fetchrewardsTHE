@@ -1,4 +1,6 @@
-const { redeemPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend } = require('../services/redeemPoints');
+const { redeemPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed } = require('../services/redeemPoints');
+
+let transaction;
 
 describe('function redeem points', () => {
     it.todo('redeems points from the oldest timestamp')
@@ -27,7 +29,6 @@ describe ('function recordNegativeBalance', () => {
 })
 
 describe('function handleNegativeBalance', () => {
-    let transaction = {"payer": "DANNON", "points": 400}
     let negativeBalance;
     let pointBalance;
     let spentBalance;
@@ -74,26 +75,79 @@ describe('function handleNegativeBalance', () => {
 })
 
 describe('function recordPointSpend', () => {
-    let spendBalance;
+    let spentBalance;
 
     beforeEach(() => {
-        spendBalance = {}
+        spentBalance = {}
     })
 
     it('records points spent to the balance record', () => {
-        recordPointSpend("DANNON", 300, spendBalance);
-        recordPointSpend("UNILEVER", 400, spendBalance);
-        expect(spendBalance).toEqual({
+        recordPointSpend("DANNON", 300, spentBalance);
+        recordPointSpend("UNILEVER", 400, spentBalance);
+        expect(spentBalance).toEqual({
             "DANNON": -300,
             "UNILEVER": -400
         })
     })
 
     it('updates points spent with the same payer on the balance record', () =>{
-        recordPointSpend("DANNON", 300, spendBalance);
-        recordPointSpend("DANNON", 400, spendBalance);
-        expect(spendBalance).toEqual({
+        recordPointSpend("DANNON", 300, spentBalance);
+        recordPointSpend("DANNON", 400, spentBalance);
+        expect(spentBalance).toEqual({
             "DANNON": -700
+        })
+    })
+})
+
+describe('function calculatePointsUsed', () => {
+    let pointBalance;
+    let spentBalance;
+
+    beforeEach(() => {
+        pointBalance = 5000;
+        spentBalance = {};
+    })
+
+    it('takes a transaction, redeems points, and records it', () => {
+        transaction = { "payer": "DANNON", "points": 200 };
+        pointBalance = calculatePointsUsed(transaction, pointBalance, spentBalance);
+        expect(pointBalance).toBe(4800);
+        expect(spentBalance).toEqual({
+            "DANNON": -200
+        })
+    })
+
+    it('takes 3 transactions (2 of same payer), redeems points, and records it', () => {
+        transaction = { "payer": "DANNON", "points": 200 };
+        let transaction2 = { "payer": "UNILEVER", "points": 400 };
+        let transaction3 = { "payer": "DANNON", "points": 300 };
+        pointBalance = calculatePointsUsed(transaction, pointBalance, spentBalance);
+        pointBalance = calculatePointsUsed(transaction2, pointBalance, spentBalance);
+        pointBalance = calculatePointsUsed(transaction3, pointBalance, spentBalance);
+        expect(pointBalance).toBe(4100);
+        expect(spentBalance).toEqual({
+            "DANNON": -500,
+            "UNILEVER": -400
+        })
+    })
+
+    it('takes a transaction with points higher than the pointBalance', () => {
+        transaction = { "payer": "DANNON", "points": 400 };
+        pointBalance = 300;
+        pointBalance = calculatePointsUsed(transaction, pointBalance, spentBalance);
+        expect(spentBalance).toEqual({
+            "DANNON": -300
+        })
+    })
+
+    it('Does not change pointBalance nor spentBalance if pointBalance is empty', () => {
+        transaction = { "payer": "DANNON", "points": 300};
+        spentBalance = {"DANNON": -300}
+        pointBalance = 0;
+        pointBalance = calculatePointsUsed(transaction, pointBalance, spentBalance);
+        expect(pointBalance).toBe(0);
+        expect(spentBalance).toEqual({
+            "DANNON": -300
         })
     })
 })

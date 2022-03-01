@@ -35,18 +35,12 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
 
         // Negative Balance Exists
         if (negativeBalance[payer] < 0) {
-            pointBalance = handleNegativeBalance(transaction, negativeBalance, pointBalance);
+            pointBalance = handleNegativeBalance(transaction, negativeBalance, pointBalance, spentBalance);
             continue;
         }        
                 
         // No Negative Balance Exists
-            // pointBalance >= Transaction balance
-                // Reduce pointBalance by Transaction balance
-                // Record spending of balance
-
-            // pointBalance < Transaction balance
-                // Reduce pointBalance by pointBalance
-                // Record spending of balance
+        calculatePointsUsed(transaction, pointBalance, spentBalance);
     }            
 }
 
@@ -64,10 +58,10 @@ const recordNegativeBalance = (transactionHistory, negativeBalance) => {
 }
 
 /**
- * Handles negative transactions if they exist for payer
+ * Handles negative transactions if they exist for payer and updates pointBalance record if points used.
  * @param {any} transaction Object { "payer": string, "points": number }
- * @param {*} negativeBalance Object that keeps track of payers to negative point balances
- * @param {*} pointBalance Points left to be redeemed
+ * @param {any} negativeBalance Object that keeps track of payers to negative point balances
+ * @param {number} pointBalance Points left to be redeemed
  * @returns Post function point balance
  */
 const handleNegativeBalance = (transaction, pointBalance, negativeBalance, spentBalance) => {
@@ -86,12 +80,33 @@ const handleNegativeBalance = (transaction, pointBalance, negativeBalance, spent
 }
 
 /**
+ * Calculates points used amd updates point balance record if points used.
+ * @param {any} transaction Object { "payer": string, "points": number }
+ * @param {*} pointBalance Points left to be redeemed
+ * @param {*} spentBalance Spent points balance record
+ * @returns Post function calculation point balance 
+ */
+const calculatePointsUsed = (transaction, pointBalance, spentBalance) => {
+    if (pointBalance >= transaction.points) {
+        recordPointSpend(transaction.payer, transaction.points, spentBalance);
+        pointBalance = pointBalance - transaction.points;
+        return pointBalance;
+    }
+
+    recordPointSpend(transaction.payer, pointBalance, spentBalance);
+    return pointBalance = 0;
+}
+
+/**
  * Records the number of points used for the payer in the spentBalance
  * @param {string} payer Payer name
  * @param {number} pointsSpent # of points spent
  * @param {any} spentBalance Spent points balance record
  */
 const recordPointSpend = (payer, pointsSpent, spentBalance) => {
+    if (pointsSpent === 0) {
+        return;
+    }
     spentBalance[payer] = (spentBalance[payer] || 0) - pointsSpent;
 }
 
@@ -99,3 +114,4 @@ module.exports.spendPoints = spendPoints;
 module.exports.recordNegativeBalance = recordNegativeBalance;
 module.exports.handleNegativeBalance = handleNegativeBalance;
 module.exports.recordPointSpend = recordPointSpend;
+module.exports.calculatePointsUsed = calculatePointsUsed;
