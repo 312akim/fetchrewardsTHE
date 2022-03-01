@@ -1,17 +1,20 @@
 /**
  * Spend points from oldest timestamp to newest by adding spend transactions to history
  * @param {any} pointsToSpend Object { "points": number } specifies # points being spend
- * @param {Array<any>} history Array of transaction objects
+ * @param {Array<any>} transactionHistory Array of transaction objects
  */
-const spendPoints = (pointsToSpend, history) => {
+const spendPoints = (pointsToSpend, transactionHistory) => {
     let pointBalance = pointsToSpend.points;
     const spentBalance = {};
+    const negativeBalance = {};
 
     // Sort History
-
+    const sortedHistory = transactionHistory.sort(function(x, y) {
+        return new Date(x.timestamp) - new Date(y.timestamp);
+    })
 
     // Record negative transactions in a ledger (initial loop)
-
+    recordNegativeBalance(transactionHistory, negativeBalance);
 
     // Loop transactions
         // Points Used and No negative balance in ledger (complete case)
@@ -39,3 +42,19 @@ const spendPoints = (pointsToSpend, history) => {
                 // Reduce pointBalance by pointBalance
                 // Record spending of balance
 }
+
+/**
+ * Loops through transaction history and records negative balances.
+ * @param {Array<any>} transactionHistory Array of transaction objects
+ * @param {any} negativeBalance Object that keeps track of payers to negative points
+ */
+const recordNegativeBalance = (transactionHistory, negativeBalance) => {
+    for (const transaction of transactionHistory) {
+        if (transaction.points < 0) {
+            negativeBalance[transaction.payer] = (negativeBalance[transaction.payer] || 0) + transaction.points;
+        }
+    }
+}
+
+module.exports.spendPoints = spendPoints;
+module.exports.recordNegativeBalance = recordNegativeBalance;
