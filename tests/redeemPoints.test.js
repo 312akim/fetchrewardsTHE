@@ -72,3 +72,28 @@ describe('function handleNegativeBalance', () => {
         expect(spentBalance).toEqual({});
     })
 })
+
+describe('function recordPointSpend', () => {
+    let spendBalance;
+
+    beforeEach(() => {
+        spendBalance = {}
+    })
+
+    it('records points spent to the balance record', () => {
+        recordPointSpend("DANNON", 300, spendBalance);
+        recordPointSpend("UNILEVER", 400, spendBalance);
+        expect(spendBalance).toEqual({
+            "DANNON": -300,
+            "UNILEVER": -400
+        })
+    })
+
+    it('updates points spent with the same payer on the balance record', () =>{
+        recordPointSpend("DANNON", 300, spendBalance);
+        recordPointSpend("DANNON", 400, spendBalance);
+        expect(spendBalance).toEqual({
+            "DANNON": -700
+        })
+    })
+})

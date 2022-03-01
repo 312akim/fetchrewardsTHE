@@ -80,7 +80,6 @@ const handleNegativeBalance = (transaction, pointBalance, negativeBalance, spent
 
     const remaining = transaction.points + (negativeBalance[payer] || 0);
     negativeBalance[payer] = 0;
-    // RECORD USAGE OF POINTS
     recordPointSpend(payer, remaining, spentBalance);
     pointBalance = pointBalance - remaining;
     return pointBalance;
