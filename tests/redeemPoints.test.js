@@ -1,5 +1,4 @@
-const { redeemPoints } = require('../services/redeemPoints');
-const { recordNegativeBalance } = require('../services/redeemPoints')
+const { redeemPoints, recordNegativeBalance, handleNegativeBalance } = require('../services/redeemPoints');
 
 describe('function redeem points', () => {
     it.todo('redeems points from the oldest timestamp')
@@ -24,5 +23,45 @@ describe ('function recordNegativeBalance', () => {
             "DANNON": -300,
             "UNILEVER": -500
         })
+    })
+})
+
+describe('function handleNegativeBalance', () => {
+    let transaction = {"payer": "DANNON", "points": 400}
+    let negativeBalance;
+    let pointBalance;
+
+    beforeEach(() => {
+        negativeBalance = {
+            "DANNON": -400
+        };
+        pointBalance = 1000;
+    })
+
+    it('updates when points are greater than the neg balance', () => {
+        transaction = {"payer": "DANNON", "points": 500}
+        pointBalance = handleNegativeBalance(transaction, negativeBalance, pointBalance);
+        expect(negativeBalance).toEqual({
+            "DANNON": 0
+        })
+        expect(pointBalance).toBe(900)
+    })
+
+    it('updates when points are equal to the neg balance', () => {
+        transaction = {"payer": "DANNON", "points": 400};
+        handleNegativeBalance(transaction, negativeBalance, pointBalance);
+        expect(negativeBalance).toEqual({
+            "DANNON": 0
+        })
+        expect(pointBalance).toBe(1000)
+    })
+
+    it('updates when points are lesser than neg balance', () => {
+        transaction = {"payer": "DANNON", "points": 300};
+        handleNegativeBalance(transaction, negativeBalance, pointBalance);
+        expect(negativeBalance).toEqual({
+            "DANNON": -100
+        })
+        expect(pointBalance).toBe(1000)
     })
 })

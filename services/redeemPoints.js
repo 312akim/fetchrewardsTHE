@@ -17,21 +17,27 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
     recordNegativeBalance(transactionHistory, negativeBalance);
 
     // Loop transactions
-        // Points Used and No negative balance in ledger (complete case)
+    for (const transaction of sortedHistory) {
+        const payer = transaction.payer;
+
+        // Check if Points Used and No negative balance in ledger (complete case)
+        if (Object.values(negativeBalance).every((v) => v === 0) && pointBalance === 0) {
             // Record into transactions
             // Return array of payers and points spent
+            console.log("Complete case hit");
+            return;
+        }
 
         // Skip Negative Transactions
-
+        if (transaction.points < 0) {
+            continue;
+        }
 
         // Negative Balance Exists
-            // Transaction balance <= Negative balance
-                // Reduce Negative balance by transaction balance
-
-            // Transaction balance > Negative balance
-                // Reduce Negative balance to 0
-                // Calculate remaining points
-                // Reduce pointBalance by remaining
+        if (negativeBalance[payer] < 0) {
+            pointBalance = handleNegativeBalance(transaction, negativeBalance, pointBalance);
+            continue;
+        }        
                 
         // No Negative Balance Exists
             // pointBalance >= Transaction balance
@@ -41,12 +47,13 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
             // pointBalance < Transaction balance
                 // Reduce pointBalance by pointBalance
                 // Record spending of balance
+    }            
 }
 
 /**
  * Loops through transaction history and records negative balances.
  * @param {Array<any>} transactionHistory Array of transaction objects
- * @param {any} negativeBalance Object that keeps track of payers to negative points
+ * @param {any} negativeBalance Object that keeps track of payers to negative point balances
  */
 const recordNegativeBalance = (transactionHistory, negativeBalance) => {
     for (const transaction of transactionHistory) {
@@ -56,5 +63,27 @@ const recordNegativeBalance = (transactionHistory, negativeBalance) => {
     }
 }
 
+/**
+ * Handles negative transactions if they exist for payer
+ * @param {any} transaction Object { "payer": string, "points": number }
+ * @param {*} negativeBalance Object that keeps track of payers to negative point balances
+ * @param {*} pointBalance Points left to be redeemed
+ * @returns Post function point balance
+ */
+const handleNegativeBalance = (transaction, negativeBalance, pointBalance) => {
+    const payer = transaction.payer;
+    
+    if (transaction.points + negativeBalance[payer] <= 0) {
+        negativeBalance[payer] = (negativeBalance[payer] || 0) + transaction.points;
+        return pointBalance;
+    }
+
+    const remaining = transaction.points + (negativeBalance[payer] || 0);
+    negativeBalance[payer] = 0;
+    pointBalance = pointBalance - remaining;
+    return pointBalance;
+}
+
 module.exports.spendPoints = spendPoints;
 module.exports.recordNegativeBalance = recordNegativeBalance;
+module.exports.handleNegativeBalance = handleNegativeBalance;
