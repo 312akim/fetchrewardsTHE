@@ -1,4 +1,4 @@
-const { redeemPoints, recordNegativeBalance, handleNegativeBalance } = require('../services/redeemPoints');
+const { redeemPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend } = require('../services/redeemPoints');
 
 describe('function redeem points', () => {
     it.todo('redeems points from the oldest timestamp')
@@ -30,38 +30,45 @@ describe('function handleNegativeBalance', () => {
     let transaction = {"payer": "DANNON", "points": 400}
     let negativeBalance;
     let pointBalance;
+    let spentBalance;
 
     beforeEach(() => {
         negativeBalance = {
             "DANNON": -400
         };
         pointBalance = 1000;
+        spentBalance = {};
     })
 
     it('updates when points are greater than the neg balance', () => {
         transaction = {"payer": "DANNON", "points": 500}
-        pointBalance = handleNegativeBalance(transaction, negativeBalance, pointBalance);
+        pointBalance = handleNegativeBalance(transaction, pointBalance, negativeBalance, spentBalance);
         expect(negativeBalance).toEqual({
             "DANNON": 0
         })
-        expect(pointBalance).toBe(900)
+        expect(pointBalance).toBe(900);
+        expect(spentBalance).toEqual({
+            "DANNON": -100
+        });
     })
 
     it('updates when points are equal to the neg balance', () => {
         transaction = {"payer": "DANNON", "points": 400};
-        handleNegativeBalance(transaction, negativeBalance, pointBalance);
+        handleNegativeBalance(transaction, pointBalance, negativeBalance, spentBalance);
         expect(negativeBalance).toEqual({
             "DANNON": 0
         })
-        expect(pointBalance).toBe(1000)
+        expect(pointBalance).toBe(1000);
+        expect(spentBalance).toEqual({});
     })
 
     it('updates when points are lesser than neg balance', () => {
         transaction = {"payer": "DANNON", "points": 300};
-        handleNegativeBalance(transaction, negativeBalance, pointBalance);
+        handleNegativeBalance(transaction, pointBalance, negativeBalance, spentBalance);
         expect(negativeBalance).toEqual({
             "DANNON": -100
         })
-        expect(pointBalance).toBe(1000)
+        expect(pointBalance).toBe(1000);
+        expect(spentBalance).toEqual({});
     })
 })
