@@ -1,5 +1,7 @@
 const transactionHistory = [];
 const { addTransaction } = require('../services/addTransaction');
+const { spendPoints } = require('../services/spendPoints');
+const { returnPoints } = require('../services/returnPoints');
 
 exports.addTransaction = (req, res) => {
     if (!req.body.payer || !req.body.points) {
@@ -10,25 +12,27 @@ exports.addTransaction = (req, res) => {
     }
     
     addTransaction(req.body, transactionHistory);
-
+    
     res.status(200).json({
         message: "Transaction successfully added.",
-        data: transactionHistory
     })
 }
 
 exports.spendPoints = (req, res) => {
-    // DB Logic
+    if (req.body.spendPoints <= 0) {
+        res.status(400).json({
+            message: "Points being spent cannot be negative nor 0."
+        })
+        return;
+    }
 
-    res.status(200).json({
-        message: "Spend points controller hit."
-    })
+    const result = spendPoints(req.body, transactionHistory);
+
+    res.status(200).json(result)
 }
 
 exports.returnPoints = (req, res) => {
-    // DB Logic
+    const result = returnPoints(transactionHistory);
 
-    res.status(200).json({
-        message: "Return points controller hit."
-    })
+    res.status(200).json(result)
 }

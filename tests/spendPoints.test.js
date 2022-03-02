@@ -1,4 +1,4 @@
-const { spendPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed, convertSpentBalance } = require('../services/redeemPoints');
+const { spendPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed, convertSpentBalance } = require('../services/spendPoints');
 
 
 let transaction;
