@@ -1,9 +1,14 @@
 const { spendPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed, convertSpentBalance } = require('../services/redeemPoints');
-const { addTransaction} = require('../services/addTransaction');
 
+
+let transaction;
+let spentBalance;
+let pointBalance;
 
 describe('function spendPoints', () => {
     let transactionHistory;
+    const pointsToSpend = { "points": 5000 }
+
     beforeEach(() => {
         transactionHistory = [
             { "payer": "DANNON", "points": 1000, "timestamp": "2020-11-02T14:00:00Z" },
@@ -14,7 +19,7 @@ describe('function spendPoints', () => {
         ]
     })
 
-    const pointsToSpend = { "points": 5000 }
+
 
     it('redeems points from the oldest timestamp', () => {
         const result = spendPoints(pointsToSpend, transactionHistory)
@@ -41,8 +46,6 @@ describe('function spendPoints', () => {
 })
 
 describe('function convertSpentBalance', () => {
-    let spentBalance;
-
     it('converts spentBalance to array of spend objects', () => {
         spentBalance = {
             "DANNON": -200,
@@ -94,8 +97,6 @@ describe ('function recordNegativeBalance', () => {
 
 describe('function handleNegativeBalance', () => {
     let negativeBalance;
-    let pointBalance;
-    let spentBalance;
 
     beforeEach(() => {
         negativeBalance = {
@@ -139,8 +140,6 @@ describe('function handleNegativeBalance', () => {
 })
 
 describe('function recordPointSpend', () => {
-    let spentBalance;
-
     beforeEach(() => {
         spentBalance = {}
     })
@@ -164,9 +163,6 @@ describe('function recordPointSpend', () => {
 })
 
 describe('function calculatePointsUsed', () => {
-    let pointBalance;
-    let spentBalance;
-
     beforeEach(() => {
         pointBalance = 5000;
         spentBalance = {};
