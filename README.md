@@ -28,16 +28,20 @@ Confirm by navigating to http://localhost:3306/ on a browser.
 
 #### Endpoints:
 To add a transaction[^1]
+
 POST: http://localhost:3306/api/points/addTransaction
 
 To spend points[^2]
+
 POST: http://localhost:3306/api/points/spendPoints
 
 To get all payers and points remaining
+
 GET: http://localhost:3306/api/points/returnPoints
 
 To reset transaction history[^3]
-POST:
+
+POST: http://localhost:3306/api/points/resetTransactions
 
 [^1]: Requires object with keys "payer" and "points". Eg. { "payer": "DANNON", "points": 5000 }
 [^2]: Requires object key "points". Eg. { "points": 500 }
