@@ -13,7 +13,7 @@ describe('function redeem points', () => {
 
     const pointsToSpend = { "points": 5000 }
 
-    it.skip('redeems points from the oldest timestamp', () => {
+    it('redeems points from the oldest timestamp', () => {
         const result = spendPoints(pointsToSpend, transactionHistory)
         expect(result).toEqual([
             { "payer": "DANNON", "points": -100 }, 
