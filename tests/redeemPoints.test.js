@@ -1,9 +1,49 @@
-const { redeemPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed } = require('../services/redeemPoints');
+const { redeemPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed, convertSpentBalance } = require('../services/redeemPoints');
 
 let transaction;
+/*
+COMPLETED FUNCTION
 
+WHOLE SPEND FUNCTION / TEST
+
+RETURN POINTS FUNCTION / TEST
+
+DOCUMENTATION
+*/
 describe('function redeem points', () => {
-    it.todo('redeems points from the oldest timestamp')
+    it.skip('redeems points from the oldest timestamp', () => {
+        const result = convertSpentBalance(spentBalance)
+    })
+})
+
+describe('function convertSpentBalance', () => {
+    let spentBalance;
+
+    it('converts spentBalance to array of spend objects', () => {
+        spentBalance = {
+            "DANNON": 200,
+            "UNILEVER": 400,
+            "MILLER COORS": 2000,
+        };
+        const result = convertSpentBalance(spentBalance)
+        expect(result).toEqual([
+            { "payer": "DANNON", "points": -200 }, 
+            { "payer": "UNILEVER", "points": -400 }, 
+            { "payer": "MILLER COORS", "points": -2000 }
+        ])
+    })
+
+    it('does not convert if spentBalance points is equal to 0', () => {
+        spentBalance = {
+            "DANNON": 200,
+            "UNILEVER": 0,
+            "MILLER COORS": 0,
+        };
+        const result = convertSpentBalance(spentBalance)
+        expect(result).toEqual([
+           { "payer": "DANNON", "points": -200}
+        ])
+    })
 })
 
 describe ('function recordNegativeBalance', () => {

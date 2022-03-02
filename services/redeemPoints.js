@@ -22,10 +22,18 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
 
         // Check if Points Used and No negative balance in ledger (complete case)
         if (Object.values(negativeBalance).every((v) => v === 0) && pointBalance === 0) {
-            // Record into transactions
-            // Return array of payers and points spent
             console.log("Complete case hit");
-            return;
+            // Convert to correct format
+            // Return array of payers and points spent
+            const result = [];
+            spentBalance.entries((entry) => {
+                const obj = {
+                    [entry[0]]: entry[1]
+                };
+                result.push(obj);
+            })
+            // [{payer: point}]
+            return result;
         }
 
         // Skip Negative Transactions
@@ -110,8 +118,32 @@ const recordPointSpend = (payer, pointsSpent, spentBalance) => {
     spentBalance[payer] = (spentBalance[payer] || 0) - pointsSpent;
 }
 
+/**
+ * Converts spentBalance object to an array of objects with keys "payers" and "points"
+ * @param {any} spentBalance Object { "payer": string, "points": number }
+ * @returns Formatted Array of Objects with keys "payer" and "points"
+ */
+const convertSpentBalance = (spentBalance) => {
+    const result = [];
+    for (const [key, value] of Object.entries(spentBalance)) {
+        if (value === 0) {
+            continue;
+        }
+        
+        const entry = {
+            "payer": key,
+            "points": -value,
+        }
+
+        result.push(entry);
+    }
+
+    return result;
+}
+
 module.exports.spendPoints = spendPoints;
 module.exports.recordNegativeBalance = recordNegativeBalance;
 module.exports.handleNegativeBalance = handleNegativeBalance;
 module.exports.recordPointSpend = recordPointSpend;
 module.exports.calculatePointsUsed = calculatePointsUsed;
+module.exports.convertSpentBalance = convertSpentBalance;
