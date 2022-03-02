@@ -1,8 +1,8 @@
 # Fetch Rewards Take Home Exam
-This server mocks a points earned. spent, and remaining system.
+This server mocks a points earned, spent, and remaining system.
 
 ### Downloading and Installing dependencies for the server
-NPM is required to run this server.
+[NPM](https://www.npmjs.com/) is required to run this server.
 
 Navigate CLI to desired download location and run
 **git clone https://github.com/312akim/fetchrewardsTHE.git**
@@ -24,19 +24,24 @@ Confirm by navigating to http://localhost:3306/ on a browser.
 "Server is active" should be visible on the web page.
 
 ### Interacting with the Server
-POSTMAN is a great tool for interacting with endpoints and my recommended tool to interacting with this server.
+[POSTMAN](https://www.postman.com/) is a great tool for interacting with endpoints and my recommended tool to interacting with this server.
 
 #### Endpoints:
-To add a transaction
+To add a transaction[^1]
 POST: http://localhost:3306/api/points/addTransaction
-Requires object with keys "payer": string and "points": number.
 
-To spend points
+To spend points[^2]
 POST: http://localhost:3306/api/points/spendPoints
-Requires object key "points": number.
 
 To get all payers and points remaining
 GET: http://localhost:3306/api/points/returnPoints
+
+To reset transaction history[^3]
+POST:
+
+[^1]: Requires object with keys "payer" and "points". Eg. { "payer": "DANNON", "points": 5000 }
+[^2]: Requires object key "points". Eg. { "points": 500 }
+[^3]: Requires object key "reset" set to true. Eg. { "reset": true }
 
 
 ### Running Jest Tests
