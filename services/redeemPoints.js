@@ -4,6 +4,9 @@
  * @param {Array<any>} transactionHistory Array of transaction objects
  */
 const spendPoints = (pointsToSpend, transactionHistory) => {
+    if (pointsToSpend.points < 0) {
+        throw new Error("Points to spend cannot be negative.")
+    }
     let pointBalance = pointsToSpend.points;
     const spentBalance = {};
     const negativeBalance = {};
