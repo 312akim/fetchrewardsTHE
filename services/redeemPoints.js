@@ -22,13 +22,8 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
 
         // Check if Points Used and No negative balance in ledger (complete case)
         if (Object.values(negativeBalance).every((v) => v === 0) && pointBalance === 0) {
-            const result = [];
-            spentBalance.entries((entry) => {
-                const obj = {
-                    [entry[0]]: entry[1]
-                };
-                result.push(obj);
-            })
+            let result = [];
+            result = convertSpentBalance(spentBalance);
             // RECORD TRANSACTIONS
             return result;
         }
@@ -45,8 +40,9 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
         }        
                 
         // No Negative Balance Exists
-        calculatePointsUsed(transaction, pointBalance, spentBalance);
-    }            
+        pointBalance = calculatePointsUsed(transaction, pointBalance, spentBalance);
+    }
+    throw new Error("Never hit final!")            
 }
 
 /**
@@ -129,7 +125,7 @@ const convertSpentBalance = (spentBalance) => {
 
         const entry = {
             "payer": key,
-            "points": -value,
+            "points": value,
         }
 
         result.push(entry);

@@ -11,12 +11,14 @@ describe('function redeem points', () => {
         { "payer": "DANNON", "points": 300, "timestamp": "2020-10-31T10:00:00Z" },
     ]
 
+    const pointsToSpend = { "points": 5000 }
+
     it.skip('redeems points from the oldest timestamp', () => {
-        const result = spendPoints(5000, transactionHistory)
+        const result = spendPoints(pointsToSpend, transactionHistory)
         expect(result).toEqual([
-            { "payer": "DANNON", "points": -200 }, 
-            { "payer": "UNILEVER", "points": -400 }, 
-            { "payer": "MILLER COORS", "points": -2000 }
+            { "payer": "DANNON", "points": -100 }, 
+            { "payer": "UNILEVER", "points": -200 }, 
+            { "payer": "MILLER COORS", "points": -4700 }
         ])
     })
 })
@@ -26,9 +28,9 @@ describe('function convertSpentBalance', () => {
 
     it('converts spentBalance to array of spend objects', () => {
         spentBalance = {
-            "DANNON": 200,
-            "UNILEVER": 400,
-            "MILLER COORS": 2000,
+            "DANNON": -200,
+            "UNILEVER": -400,
+            "MILLER COORS": -2000,
         };
         const result = convertSpentBalance(spentBalance)
         expect(result).toEqual([
@@ -40,7 +42,7 @@ describe('function convertSpentBalance', () => {
 
     it('does not convert if spentBalance points is equal to 0', () => {
         spentBalance = {
-            "DANNON": 200,
+            "DANNON": -200,
             "UNILEVER": 0,
             "MILLER COORS": 0,
         };
