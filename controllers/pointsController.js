@@ -3,7 +3,7 @@ const { spendPoints } = require('../services/spendPoints');
 const { returnPoints } = require('../services/returnPoints');
 
 // IN MEMORY
-const transactionHistory = [];
+let transactionHistory = [];
 
 exports.addTransaction = (req, res) => {
     if (!req.body.payer || !req.body.points) {
@@ -37,4 +37,18 @@ exports.returnPoints = (req, res) => {
     const result = returnPoints(transactionHistory);
 
     res.status(200).json(result)
+}
+
+exports.resetTransactions = (req, res) => {
+    if (req.body.reset === true) {
+        transactionHistory = [];
+        res.status(200).json({
+            message: "Transactions History has been reset."
+        })
+        return
+    }
+
+    res.status(200).json({
+        message: "To reset, send { reset: true } to this endpoint."
+    })
 }
