@@ -5,6 +5,8 @@
  * @returns Updated history array
  */
 const addTransaction = (transaction, history) => {
+    transaction.timestamp = new Date();
+    console.log(transaction);
     history.push(transaction);
 }
 

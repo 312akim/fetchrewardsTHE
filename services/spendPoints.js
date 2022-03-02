@@ -29,6 +29,8 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
             let result = [];
             result = convertSpentBalance(spentBalance);
             result.map((transaction) => {
+                transaction.timestamp = new Date();
+                console.log(transaction);
                 transactionHistory.push(transaction);
             })
             return result;
