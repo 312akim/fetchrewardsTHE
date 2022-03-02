@@ -1,18 +1,23 @@
-const { redeemPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed, convertSpentBalance } = require('../services/redeemPoints');
+const { spendPoints, recordNegativeBalance, handleNegativeBalance, recordPointSpend, calculatePointsUsed, convertSpentBalance } = require('../services/redeemPoints');
+const { addTransaction} = require('../services/addTransaction');
 
-let transaction;
-/*
-COMPLETED FUNCTION
 
-WHOLE SPEND FUNCTION / TEST
-
-RETURN POINTS FUNCTION / TEST
-
-DOCUMENTATION
-*/
 describe('function redeem points', () => {
+    const transactionHistory = [
+        { "payer": "DANNON", "points": 1000, "timestamp": "2020-11-02T14:00:00Z" },
+        { "payer": "UNILEVER", "points": 200, "timestamp": "2020-10-31T11:00:00Z" },
+        { "payer": "DANNON", "points": -200, "timestamp": "2020-10-31T15:00:00Z" },
+        { "payer": "MILLER COORS", "points": 10000, "timestamp": "2020-11-01T14:00:00Z" },
+        { "payer": "DANNON", "points": 300, "timestamp": "2020-10-31T10:00:00Z" },
+    ]
+
     it.skip('redeems points from the oldest timestamp', () => {
-        const result = convertSpentBalance(spentBalance)
+        const result = spendPoints(5000, transactionHistory)
+        expect(result).toEqual([
+            { "payer": "DANNON", "points": -200 }, 
+            { "payer": "UNILEVER", "points": -400 }, 
+            { "payer": "MILLER COORS", "points": -2000 }
+        ])
     })
 })
 

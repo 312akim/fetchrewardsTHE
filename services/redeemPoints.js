@@ -22,9 +22,6 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
 
         // Check if Points Used and No negative balance in ledger (complete case)
         if (Object.values(negativeBalance).every((v) => v === 0) && pointBalance === 0) {
-            console.log("Complete case hit");
-            // Convert to correct format
-            // Return array of payers and points spent
             const result = [];
             spentBalance.entries((entry) => {
                 const obj = {
@@ -32,7 +29,7 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
                 };
                 result.push(obj);
             })
-            // [{payer: point}]
+            // RECORD TRANSACTIONS
             return result;
         }
 
@@ -43,7 +40,7 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
 
         // Negative Balance Exists
         if (negativeBalance[payer] < 0) {
-            pointBalance = handleNegativeBalance(transaction, negativeBalance, pointBalance, spentBalance);
+            pointBalance = handleNegativeBalance(transaction, pointBalance, negativeBalance, spentBalance);
             continue;
         }        
                 
@@ -129,7 +126,7 @@ const convertSpentBalance = (spentBalance) => {
         if (value === 0) {
             continue;
         }
-        
+
         const entry = {
             "payer": key,
             "points": -value,
