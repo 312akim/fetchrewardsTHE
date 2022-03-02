@@ -48,6 +48,15 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
         // No Negative Balance Exists
         pointBalance = calculatePointsUsed(transaction, pointBalance, spentBalance);
     }
+    
+    if (pointBalance > 0) {
+        throw new Error("Could not redeem all points!")
+    }
+
+    if (!areValuesZero(negativeBalance)) {
+        throw new Error("Could not balance all negative transactions.")
+    }
+
     throw new Error("Never hit final!")            
 }
 
@@ -138,6 +147,18 @@ const convertSpentBalance = (spentBalance) => {
     }
 
     return result;
+}
+
+/**
+ * Checks if all Object Keys are equal to 0
+ * @param {any} obj Object to check
+ * @returns boolean
+ */
+const areValuesZero = (obj) => {
+    if (Object.values(obj).every((v) => v === 0)) {
+        return true
+    }
+    return false;
 }
 
 module.exports.spendPoints = spendPoints;
