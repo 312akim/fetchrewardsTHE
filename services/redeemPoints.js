@@ -12,7 +12,8 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
     const negativeBalance = {};
 
     // Sort History
-    const sortedHistory = transactionHistory.sort(function(x, y) {
+    const unsortedHistory = [...transactionHistory];
+    const sortedHistory = unsortedHistory.sort(function(x, y) {
         return new Date(x.timestamp) - new Date(y.timestamp);
     })
 
@@ -27,7 +28,9 @@ const spendPoints = (pointsToSpend, transactionHistory) => {
         if (Object.values(negativeBalance).every((v) => v === 0) && pointBalance === 0) {
             let result = [];
             result = convertSpentBalance(spentBalance);
-            // RECORD TRANSACTIONS
+            result.map((transaction) => {
+                transactionHistory.push(transaction);
+            })
             return result;
         }
 

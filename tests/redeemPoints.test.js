@@ -3,19 +3,36 @@ const { addTransaction} = require('../services/addTransaction');
 
 
 describe('function spendPoints', () => {
-    const transactionHistory = [
-        { "payer": "DANNON", "points": 1000, "timestamp": "2020-11-02T14:00:00Z" },
-        { "payer": "UNILEVER", "points": 200, "timestamp": "2020-10-31T11:00:00Z" },
-        { "payer": "DANNON", "points": -200, "timestamp": "2020-10-31T15:00:00Z" },
-        { "payer": "MILLER COORS", "points": 10000, "timestamp": "2020-11-01T14:00:00Z" },
-        { "payer": "DANNON", "points": 300, "timestamp": "2020-10-31T10:00:00Z" },
-    ]
+    let transactionHistory;
+    beforeEach(() => {
+        transactionHistory = [
+            { "payer": "DANNON", "points": 1000, "timestamp": "2020-11-02T14:00:00Z" },
+            { "payer": "UNILEVER", "points": 200, "timestamp": "2020-10-31T11:00:00Z" },
+            { "payer": "DANNON", "points": -200, "timestamp": "2020-10-31T15:00:00Z" },
+            { "payer": "MILLER COORS", "points": 10000, "timestamp": "2020-11-01T14:00:00Z" },
+            { "payer": "DANNON", "points": 300, "timestamp": "2020-10-31T10:00:00Z" },
+        ]
+    })
 
     const pointsToSpend = { "points": 5000 }
 
     it('redeems points from the oldest timestamp', () => {
         const result = spendPoints(pointsToSpend, transactionHistory)
         expect(result).toEqual([
+            { "payer": "DANNON", "points": -100 }, 
+            { "payer": "UNILEVER", "points": -200 }, 
+            { "payer": "MILLER COORS", "points": -4700 }
+        ])
+    })
+
+    it('pushes the spent point transactions to the transaction history', () => {
+        spendPoints(pointsToSpend, transactionHistory)
+        expect(transactionHistory).toEqual([
+            { "payer": "DANNON", "points": 1000, "timestamp": "2020-11-02T14:00:00Z" },
+            { "payer": "UNILEVER", "points": 200, "timestamp": "2020-10-31T11:00:00Z" },
+            { "payer": "DANNON", "points": -200, "timestamp": "2020-10-31T15:00:00Z" },
+            { "payer": "MILLER COORS", "points": 10000, "timestamp": "2020-11-01T14:00:00Z" },
+            { "payer": "DANNON", "points": 300, "timestamp": "2020-10-31T10:00:00Z" },
             { "payer": "DANNON", "points": -100 }, 
             { "payer": "UNILEVER", "points": -200 }, 
             { "payer": "MILLER COORS", "points": -4700 }
