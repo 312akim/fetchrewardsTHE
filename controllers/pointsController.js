@@ -1,7 +1,9 @@
-const transactionHistory = [];
 const { addTransaction } = require('../services/addTransaction');
 const { spendPoints } = require('../services/spendPoints');
 const { returnPoints } = require('../services/returnPoints');
+
+// IN MEMORY
+const transactionHistory = [];
 
 exports.addTransaction = (req, res) => {
     if (!req.body.payer || !req.body.points) {
@@ -12,7 +14,7 @@ exports.addTransaction = (req, res) => {
     }
     
     addTransaction(req.body, transactionHistory);
-    
+
     res.status(200).json({
         message: "Transaction successfully added.",
     })
